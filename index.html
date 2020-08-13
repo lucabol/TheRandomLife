@@ -9,6 +9,10 @@
 </head>
 
 <body>
+  <nav>
+    <a style="margin-right: 10px;" class="btn btn-primary btn-sm" href="/.auth/login/github" v-if="!user.userDetails">Login</a> 
+    <a style="margin-right: 10px;" class="btn btn-primary btn-sm" href="/.auth/logout" v-if="user.userDetails">Log out</a>
+  </nav>
   <main>
     <h1>Vanilla JavaScript App</h1>
   </main>
