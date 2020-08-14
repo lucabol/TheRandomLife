@@ -15,7 +15,15 @@
   </nav>
   <main>
     <h1>Vanilla JavaScript App</h1>
+    <p>Loading content from the API: <b id="name">...</b></p>
   </main>
+  <script>
+    (async function() {
+      let response = await fetch(`/api/GetMessage`);
+      let text = await response.text();
+      document.querySelector('#name').textContent = text;
+    }())
+  </script>
 </body>
 
 </html>
