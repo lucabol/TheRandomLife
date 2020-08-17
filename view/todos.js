@@ -1,3 +1,5 @@
+import eventCreators from '../model/eventCreators.js'
+
 let template
 
 const createNewTodoNode = () => {
@@ -11,7 +13,37 @@ const createNewTodoNode = () => {
     .cloneNode(true)
 }
 
-const getTodoElement = (todo, index) => {
+const attachEventsToTodoElement = (element, index, dispatch) => {
+  const deleteHandler = e => dispatch(eventCreators.deleteItem(parseInt(index)))
+  const toggleHandler = e => dispatch(eventCreators.toggleItemCompleted(index))
+  const updateHandler = e => {
+    if (e.key === 'Enter') {
+      element.classList.remove('editing')
+      dispatch(eventCreators.updateItem(index, e.target.value))
+    }
+  }
+
+  element
+    .querySelector('button.destroy')
+    .addEventListener('click', deleteHandler)
+
+  element
+    .querySelector('input.toggle')
+    .addEventListener('click', toggleHandler)
+
+  element
+    .addEventListener('dblclick', () => {
+      element.classList.add('editing')
+      element
+        .querySelector('input.edit').focus()
+    })
+
+  element
+    .querySelector('input.edit')
+    .addEventListener('keypress', updateHandler)
+}
+
+const getTodoElement = (todo, index, dispatch) => {
   const {
     text,
     completed
@@ -29,32 +61,37 @@ const getTodoElement = (todo, index) => {
       .checked = true
   }
 
-  element
-    .querySelector('button.destroy')
-    .dataset
-    .index = index
+  attachEventsToTodoElement(element, index, dispatch)
 
   return element
 }
 
-export default (targetElement, state, events) => {
-  const { todos } = state
-  const { deleteItem } = events
+const filterTodos = (todos, filter) => {
+  const isCompleted = todo => todo.completed
+  if (filter === 'Active') {
+    return todos.filter(t => !isCompleted(t))
+  }
+
+  if (filter === 'Completed') {
+    return todos.filter(isCompleted)
+  }
+
+  return [...todos]
+}
+
+export default (targetElement, state, dispatch) => {
+  const { todos, currentFilter } = state
   const newTodoList = targetElement.cloneNode(true)
 
   newTodoList.innerHTML = ''
 
-  todos
-    .map((todo, index) => getTodoElement(todo, index))
+  const filteredTodos = filterTodos(todos, currentFilter)
+
+  filteredTodos
+    .map((todo, index) => getTodoElement(todo, index, dispatch))
     .forEach(element => {
       newTodoList.appendChild(element)
     })
-
-  newTodoList.addEventListener('click', e => {
-    if (e.target.matches('button.destroy')) {
-      deleteItem(e.target.dataset.index)
-    }
-  })
 
   return newTodoList
 }

@@ -1,3 +1,15 @@
+const differentValue = (node1, node2) => {
+  if (node1.value !== node2.value) {
+    return true
+  }
+
+  if (node1.checked !== node2.checked) {
+    return true
+  }
+
+  return false
+}
+
 const isNodeChanged = (node1, node2) => {
   const n1Attributes = node1.attributes
   const n2Attributes = node2.attributes
@@ -18,6 +30,10 @@ const isNodeChanged = (node1, node2) => {
     })
 
   if (differentAttribute) {
+    return true
+  }
+
+  if (differentValue(node1, node2)) {
     return true
   }
 
