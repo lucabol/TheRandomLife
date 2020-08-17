@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>Vanilla JavaScript App</title>
+</head>
+
+<body>
+  <nav>
+    <a style="margin-right: 10px;" class="btn btn-primary btn-sm" href="/.auth/login/github" v-if="!user.userDetails">Login</a> 
+    <a style="margin-right: 10px;" class="btn btn-primary btn-sm" href="/.auth/logout" v-if="user.userDetails">Log out</a>
+  </nav>
+  <main>
+    <h1>Vanilla JavaScript App</h1>
+    <p>Loading content from the API: <b id="name">...</b></p>
+  </main>
+  <script>
+    (async function() {
+      let response = await fetch(`/api/GetMessage`);
+      let text = await response.text();
+      document.querySelector('#name').textContent = text;
+    }())
+  </script>
+</body>
+
+</html>
