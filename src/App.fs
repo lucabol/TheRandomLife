@@ -250,8 +250,7 @@ let filterTodos (filter: TodoFilter) (todos: Todo list) =
   | TodoFilter.NotCompletedYet -> List.filter (fun todo -> not todo.Completed) todos
       
 let loginPage =
-  Html.div [ prop.custom ("data-netlify-identity-button", "")
-             prop.className "button is-primary is-large is-rounded is-focused" ]
+  Html.none
 
 let taskPage (state:State) (dispatch: Msg -> unit) =
   let filteredTodos = filterTodos state.Filter state.TodoList
@@ -278,8 +277,10 @@ let taskPage (state:State) (dispatch: Msg -> unit) =
 let identity () : obj = jsNative
 
 let render (state: State) (dispatch: Msg -> unit) =
-  if not (isNull (identity ())) then taskPage state dispatch else loginPage
+  let id = identity ()
+  printfn "%A" id
+  if not (isNull id) then taskPage state dispatch else loginPage
 
 Program.mkSimple init update render
-|> Program.withReactSynchronous "myBody"
+|> Program.withReactSynchronous "elmish-app"
 |> Program.run
