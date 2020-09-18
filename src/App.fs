@@ -5,6 +5,10 @@ open Elmish
 open Elmish.React
 open Fable.React 
 open Fable.React.Props
+open Feliz
+
+open Fable.Core.JsInterop
+open Fable.Core
 
 [<RequireQualifiedAccess>]
 type TodoFilter =
@@ -245,14 +249,18 @@ let filterTodos (filter: TodoFilter) (todos: Todo list) =
   | TodoFilter.CompletedOnly -> List.filter (fun todo -> todo.Completed) todos
   | TodoFilter.NotCompletedYet -> List.filter (fun todo -> not todo.Completed) todos
       
-let render (state: State) (dispatch: Msg -> unit) =
+let loginPage =
+  Html.div [ prop.custom ("data-netlify-identity-button", "")
+             prop.className "button is-primary is-large is-rounded is-focused" ]
+
+let taskPage (state:State) (dispatch: Msg -> unit) =
   let filteredTodos = filterTodos state.Filter state.TodoList
   let beingEdited (item: Todo) = 
     state.TodosBeingEdited
     |> List.tryFind (fun todo -> todo.Id = item.Id)
 
   div [ Style [ Padding 20 ] ] [
-    h3 [ Class "title" ] [ str "Elmish To-Do list" ]
+    h3 [ Class "title" ] [ str "The Random Life Task Manager" ]
     createTodoTextbox state dispatch
     renderFilterTabs state.Filter dispatch
     div [ Class "content" ] [ 
@@ -265,6 +273,13 @@ let render (state: State) (dispatch: Msg -> unit) =
     ]
   ]
 
+
+[<Emit("window.netlifyIdentity")>]
+let identity () : obj = jsNative
+
+let render (state: State) (dispatch: Msg -> unit) =
+  if not (isNull (identity ())) then taskPage state dispatch else loginPage
+
 Program.mkSimple init update render
-|> Program.withReactSynchronous "elmish-app"
+|> Program.withReactSynchronous "myBody"
 |> Program.run
