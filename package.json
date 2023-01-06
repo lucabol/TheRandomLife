@@ -9,7 +9,7 @@
     "url": "https://github.com/lucabol/TheRandomLife.git"
   },
   "dependencies": {
-    "@babel/core": "^7.1.2",
+    "@babel/core": "^7.20.12",
     "fable-compiler": "^2.3.3",
     "fable-loader": "^2.1.6",
     "gh-pages": "^2.0.1",
